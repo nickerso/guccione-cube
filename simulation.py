@@ -538,7 +538,7 @@ def simulate(fibreAngleIn, materialParameters):
     
     # loop over load steps
     
-    numberOfLoadSteps = 60
+    numberOfLoadSteps = 70
     displacementIncrement = 0.01 # 1%
     displacementIncrementDimension = displacementIncrement*width # length units
     resultRecord = {}
