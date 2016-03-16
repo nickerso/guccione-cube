@@ -39,10 +39,18 @@ with open(resultsFileName) as resultsFile:
 
 labelText = str(results["materialParameters"])
 plt.plot(results["fibre"]["strain"], results["fibre"]["stress"], "r-", label=labelText)
-plt.plot(results["cross"]["strain"], results["cross"]["stress"], "r--")
+plt.plot(results["cross"]["strain"], results["cross"]["stress"], "r1")
+
+run(["python", RunScript, "1.0", "5.0", "5.0", "5.0"], stdout=DEVNULL)
+with open(resultsFileName) as resultsFile:
+    results = json.load(resultsFile)
+
+labelText = str(results["materialParameters"])
+plt.plot(results["fibre"]["strain"], results["fibre"]["stress"], "c-", label=labelText)
+plt.plot(results["cross"]["strain"], results["cross"]["stress"], "co")
 
 
 plt.ylim(ymax=50)
 plt.ylabel('some numbers')
-plt.legend()
+plt.legend(loc=0)
 plt.show()
