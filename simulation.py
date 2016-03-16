@@ -7,6 +7,8 @@
 # Add Python bindings directory to PATH
 import sys, os
 from numpy import pi
+import json
+from pprint import pprint
 
 # Intialise OpenCMISS
 from opencmiss.iron import iron
@@ -531,12 +533,16 @@ def defineBoundaryConditions(solverEquations, increment):
     solverEquations.BoundaryConditionsCreateFinish()
 
 # loop over load steps
-numberOfLoadSteps = 5
-for counter in range(0, numberOfLoadSteps):
+
+numberOfLoadSteps = 10
+displacementIncrement = 0.05 # 5%
+displacementIncrementDimension = displacementIncrement*width # length units
+resultRecord = [[0.0, 0.0]]
+for counter in range(1, numberOfLoadSteps+1):
     # define the problem, solver, control loops, etc.
     [problem, solverEquations] = defineProblemSolver()
     # define the boundary conditions
-    defineBoundaryConditions(solverEquations, 0.1*width)
+    defineBoundaryConditions(solverEquations, displacementIncrementDimension)
     # execute the experiment
     problem.Solve()
     # clean up
@@ -544,7 +550,7 @@ for counter in range(0, numberOfLoadSteps):
     solverEquations.Finalise()
             
     # export the results
-    filename = "results-{:03d}".format(counter+1)
+    filename = "results-{:03d}".format(counter)
 
     # Copy deformed geometry into deformed field
     for component in [1, 2, 3]:
@@ -560,4 +566,14 @@ for counter in range(0, numberOfLoadSteps):
     fields.NodesExport(filename, "FORTRAN")
     fields.ElementsExport(filename, "FORTRAN")
     fields.Finalise()
+    
+    versionNumber = 1
+    derivativeNumber = 1
+    nodeNumber = 8
+    componentNumber = 1 # x-dirn
+    reactionForceX = dependentField.ParameterSetGetNode(iron.FieldVariableTypes.DELUDELN, iron.FieldParameterSetTypes.VALUES,
+                                                        versionNumber, derivativeNumber, nodeNumber, componentNumber)
+    print("Reaction force (x) at counter: " + str(counter) + ": " + str(reactionForceX))
+    resultRecord.append([counter * displacementIncrement, reactionForceX])
 
+pprint(resultRecord)
