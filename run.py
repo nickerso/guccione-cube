@@ -7,7 +7,7 @@ import sys
 materialParameters = [1.0, 5.0, 10.0, 5.0]
 resultsFileName = "results.json"
 if len(sys.argv) >= 5:
-    materialParameters = [sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]]
+    materialParameters = [float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4])]
     
 if len(sys.argv) == 6:
     resultsFileName = sys.argv[5]

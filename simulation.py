@@ -357,6 +357,7 @@ def simulate(fibreAngleIn, materialParameters):
     cellmlFile = join(script_path, "guccione.cellml")
     # guccioneCellMLParameters = [0.88, 0.0, 18.5, 3.58, 3.26] # default values in CellML model
     guccioneCellMLParameters = [1.0, 0.0, 5.0, 10.0, 5.0]
+    guccioneCellMLParameters = [materialParameters[0], 0.0, materialParameters[1], materialParameters[2], materialParameters[3]]
     # the names of the variables in the CellML model for the parameters in the same order as the values above
     guccioneCellMLParameterIds = ["interface/c1", "interface/c2", "interface/c3", "interface/c4", "interface/c5"]
     # Import a Guccione material law from a file
@@ -537,10 +538,12 @@ def simulate(fibreAngleIn, materialParameters):
     
     # loop over load steps
     
-    numberOfLoadSteps = 10
-    displacementIncrement = 0.05 # 5%
+    numberOfLoadSteps = 60
+    displacementIncrement = 0.01 # 1%
     displacementIncrementDimension = displacementIncrement*width # length units
-    resultRecord = [[0.0, 0.0]]
+    resultRecord = {}
+    resultRecord["strain"] = [0.0]
+    resultRecord["stress"] = [0.0] 
     for counter in range(1, numberOfLoadSteps+1):
         # define the problem, solver, control loops, etc.
         [problem, solverEquations] = defineProblemSolver()
@@ -577,7 +580,8 @@ def simulate(fibreAngleIn, materialParameters):
         reactionForceX = dependentField.ParameterSetGetNode(iron.FieldVariableTypes.DELUDELN, iron.FieldParameterSetTypes.VALUES,
                                                             versionNumber, derivativeNumber, nodeNumber, componentNumber)
         print("Reaction force (x) at counter: " + str(counter) + ": " + str(reactionForceX))
-        resultRecord.append([counter * displacementIncrement, reactionForceX])
+        resultRecord["strain"].append(counter * displacementIncrement)
+        resultRecord["stress"].append(reactionForceX)
     
     coordinateSystem.Destroy()
     region.Destroy()
