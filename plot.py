@@ -42,6 +42,6 @@ for i, parameters in enumerate(parameterSets, 0):
 
 plt.ylim(ymax=50)
 plt.ylabel('axial force')
-plt.xlabel("axial strain")
+plt.xlabel('axial strain')
 plt.legend(loc=0)
 plt.show()
